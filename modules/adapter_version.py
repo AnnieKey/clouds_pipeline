@@ -14,16 +14,15 @@ class Cloud_adaptee():
         tmp = [random.random() for _ in range(100)]
         with open(self.file_name, "w") as file:
             for i in range(len(tmp)):
-                file.write(str(i) + ":")
-                file.write(str(tmp[i]))
-                file.write(' ')
+                file.write(str(tmp[i]) + "\n")
 
     def wrap_data(self):
-        import json
         file = open(self.file_name, "r")
         data = file.read()
-        data_json = json.dumps(data, separators=(":", ""))
-        return data_json
+        list_of_numbers = data.split("\n")
+        import json
+        with open(self.file_name, "w") as outfile:
+            json.dump(list_of_numbers, outfile)
 
 
 class AWS_adaptee(Cloud_adaptee):
