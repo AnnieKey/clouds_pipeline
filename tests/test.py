@@ -20,10 +20,10 @@ class Cloud_adaptee_test(TestCase):
         self.assertEqual(self.file_name, self.cloud_adaptee.file_name)
 
         #check if file exists
-        self.assertTrue(os.path.exists("/home/anniekey/Projects/cloud_pipeline/files/test1.txt"))
+        self.assertTrue(os.path.exists(self.file_name))
 
         # check if it is a file
-        self.assertTrue(os.path.isfile("/home/anniekey/Projects/cloud_pipeline/files/test1.txt"))
+        self.assertTrue(os.path.isfile(self.file_name))
 
     def test_wrap_data(self):
         self.cloud_adaptee.wrap_data()
@@ -59,12 +59,37 @@ class AWS_adaptee_test(TestCase):
     def test_upload_file(self):
         self.AWS_adaptee.upload_file()
 
-        #check if file exist in S3
         try:
             self.s3.Object(self.bucket_name, self.file_name_in_cloud).load()
             result = True
         except botocore.exceptions.ClientError as error:
             result = False
         self.assertTrue(result)
+
+    def test_download_file(self):
+        self.AWS_adaptee.download_file()
+
+        self.assertTrue(os.path.exists(self.file_name_after_downloaded))
+
+    def test_rename_file(self):
+        self.AWS_adaptee.rename_file()
+
+        try:
+            self.s3.Object(self.bucket_name, self.new_file_name).load()
+            result = True
+        except botocore.exceptions.ClientError as error:
+            result = False
+        self.assertTrue(result)
+
+    def test_move_file(self):
+        self.AWS_adaptee.move_file()
+
+        try:
+            self.s3.Object(self.new_bucket_name, self.new_file_name).load()
+            result = True
+        except botocore.exceptions.ClientError as error:
+            result = False
+        self.assertTrue(result)
+
 
 
